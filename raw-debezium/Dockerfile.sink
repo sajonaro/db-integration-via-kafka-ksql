@@ -1,0 +1,13 @@
+# Custom Kafka Connect image for JDBC Sink Connector with Avro support
+FROM confluentinc/cp-kafka-connect-base:7.4.0
+
+# Install JDBC Sink Connector and Avro Converter
+RUN confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.7.4 && \
+    confluent-hub install --no-prompt confluentinc/kafka-connect-avro-converter:7.4.0
+
+# Set environment variables for cleaner logging
+ENV CONNECT_LOG4J_ROOT_LOGLEVEL=INFO
+ENV CONNECT_LOG4J_LOGGERS=org.apache.kafka.connect.runtime.WorkerSourceTask=INFO,org.apache.kafka.connect.runtime.WorkerSinkTask=INFO
+
+# The base image already has the correct entrypoint
+# This image will start much faster than the full Debezium image

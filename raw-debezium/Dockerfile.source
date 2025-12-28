@@ -1,0 +1,19 @@
+# Custom source connector with Debezium SQL Server connector
+# Uses Confluent base image which already has Avro support
+FROM confluentinc/cp-kafka-connect-base:7.4.0
+
+# Install Avro converter (Confluent Hub)
+RUN confluent-hub install --no-prompt confluentinc/kafka-connect-avro-converter:7.4.0
+
+# Download and install Debezium SQL Server connector directly
+RUN mkdir -p /usr/share/confluent-hub-components/debezium-connector-sqlserver && \
+    cd /tmp && \
+    curl -sLO https://repo1.maven.org/maven2/io/debezium/debezium-connector-sqlserver/2.4.0.Final/debezium-connector-sqlserver-2.4.0.Final-plugin.tar.gz && \
+    tar -xzf debezium-connector-sqlserver-2.4.0.Final-plugin.tar.gz -C /usr/share/confluent-hub-components/ && \
+    rm debezium-connector-sqlserver-2.4.0.Final-plugin.tar.gz
+
+# Set environment for cleaner logging
+ENV CONNECT_LOG4J_ROOT_LOGLEVEL=INFO
+
+# The base image already has the correct entrypoint
+# This image will start quickly with all dependencies properly configured
