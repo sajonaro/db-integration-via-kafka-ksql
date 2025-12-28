@@ -106,25 +106,7 @@ This project demonstrates a complete **Change Data Capture (CDC)** pipeline for 
 └────────────────────┘
 ```
 
-**Key Points:**
-- 🔵 **Blue Flow**: Data replication path
-- ✅ **Tombstone Preservation**: ksqlDB TABLE maintains DELETE tombstones
-- 🔑 **Key Schema Evolution**: `id` → `ID` (ksqlDB uppercases field names)
-- 🗜️ **Log Compaction Ready**: Tombstones enable `cleanup.policy=compact`
-```
 
-## Why ksqlDB TABLE for CDC?
-
-**TABLEs vs STREAMs for Change Data Capture:**
-
-| Feature | TABLE | STREAM with PARTITION BY |
-|---------|-------|--------------------------|
-| DELETE tombstone preservation | ✅ Preserves | ❌ Corrupts (sets key to null) |
-| Log compaction compatibility | ✅ Compatible | ❌ Not compatible |
-| CDC operations | ✅ INSERT, UPDATE, DELETE | ⚠️ INSERT, UPDATE only |
-| Use case | **Changelog/CDC data** | Event streams |
-
-**Key Insight:** For CDC data with DELETE operations and log compaction (Azure Event Hub), you **MUST use ksqlDB TABLEs**. STREAMs with `PARTITION BY` will corrupt DELETE tombstones.
 
 ## Quick Start
 
@@ -354,7 +336,6 @@ This solution is ready for Azure Event Hub with the following considerations:
 ## Documentation
 
 - **[TOMBSTONE_HANDLING_GUIDE.md](TOMBSTONE_HANDLING_GUIDE.md)** - Complete guide on DELETE tombstone handling
-- **[USAGE_IN_DOCKER.md](USAGE_IN_DOCKER.md)** - Docker-specific usage and troubleshooting
 
 ## Troubleshooting
 
@@ -385,10 +366,3 @@ docker-compose down -v
 ./the-whole-thing.sh
 ```
 
-## License
-
-This project is provided as-is for educational and demonstration purposes.
-
----
-
-**Status:**  Production-ready with full CDC support including DELETE tombstones
